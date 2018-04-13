@@ -90,7 +90,7 @@ namespace One.Services.Printer.Reports.Restaurant
 
         internal static void Print(PdfDocument document)
         {
-            Helper.Print(document, "Microsoft Print to PDF");
+            Helper.Print(document, @"\\minimercado01\eFACT");
         }
     }
 }
