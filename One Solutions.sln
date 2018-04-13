@@ -9,13 +9,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "One.Services.Paradise", "On
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "One.Services.Printer", "One.Services.Printer\One.Services.Printer.csproj", "{9494A57E-97D1-40EF-858A-EB22C3977146}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "dll", "dll", "{92F4DBED-2D85-4FE7-9034-1E0CD8913F02}"
-	ProjectSection(SolutionItems) = preProject
-		packages\Syncfusion.Compression.Base.dll = packages\Syncfusion.Compression.Base.dll
-		packages\Syncfusion.Pdf.Base.dll = packages\Syncfusion.Pdf.Base.dll
-		packages\Syncfusion.PdfViewer.Windows.dll = packages\Syncfusion.PdfViewer.Windows.dll
-	EndProjectSection
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
