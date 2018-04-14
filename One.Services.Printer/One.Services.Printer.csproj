@@ -78,6 +78,14 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="Fonts\Ubuntu-Bold.ttf" />
+    <None Include="Fonts\Ubuntu-BoldItalic.ttf" />
+    <None Include="Fonts\Ubuntu-Italic.ttf" />
+    <None Include="Fonts\Ubuntu-Light.ttf" />
+    <None Include="Fonts\Ubuntu-LightItalic.ttf" />
+    <None Include="Fonts\Ubuntu-Medium.ttf" />
+    <None Include="Fonts\Ubuntu-MediumItalic.ttf" />
+    <None Include="Fonts\Ubuntu-Regular.ttf" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
