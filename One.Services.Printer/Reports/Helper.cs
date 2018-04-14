@@ -92,6 +92,11 @@ namespace One.Services.Printer.Reports
             dialog.Document.PrinterSettings.PrinterName = printerName;
 
             dialog.Document.Print();
+
+            document.Close(true);
+            viewer.LoadedDocument.Close(true);
+
+            System.IO.File.Delete("Output.pdf");
         }
     }
 }

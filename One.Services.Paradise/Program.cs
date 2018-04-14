@@ -10,6 +10,13 @@ namespace One.Services.Paradise
     {
         static void Main(string[] args)
         {
+            dbDataContext db = new dbDataContext();
+            var numeradores = from x in db.NUMERADORES where x.NumId == 51 select x;
+            foreach (var item in numeradores)
+            {
+                Console.WriteLine($"{item.NumCod}");
+            }
+            Console.ReadLine();
         }
     }
 }

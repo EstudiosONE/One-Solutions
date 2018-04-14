@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web.Http;
+using System.Web.Http.SelfHost;
 
 namespace One.Services.Printer
 {
@@ -10,10 +12,17 @@ namespace One.Services.Printer
     {
         static void Main(string[] args)
         {
-            Console.WriteLine(DateTime.Now);
-            var document = Reports.Restaurant.Pension.Generate();
-            Reports.Restaurant.Pension.Print(document);
-            Console.WriteLine(DateTime.Now);
+            var config = new HttpSelfHostConfiguration("http://localhost:8080");
+
+            config.MapHttpAttributeRoutes();
+
+            using (HttpSelfHostServer server = new HttpSelfHostServer(config))
+            {
+                server.OpenAsync().Wait();
+                Console.WriteLine("Press Enter to quit.");
+                Console.ReadLine();
+            }
+
             Console.ReadLine();
         }
     }
