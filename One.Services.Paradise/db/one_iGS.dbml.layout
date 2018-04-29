@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ordesignerObjectsDiagram dslVersion="1.0.0.0" absoluteBounds="0, 0, 11, 8.5" name="one_iGS">
+  <DataContextMoniker Name="/one_iGSDataContext" />
+  <nestedChildShapes>
+    <classShape Id="06d7c018-2396-4496-b06b-a8edc52f9472" absoluteBounds="0.75, 0.75, 2, 1.9631982421875005">
+      <DataClassMoniker Name="/one_iGSDataContext/Rates" />
+      <nestedChildShapes>
+        <elementListCompartment Id="29c96d2a-b8dc-4c43-8481-0ac939a32230" absoluteBounds="0.76499999999999968, 1.21, 1.9700000000000002, 1.4031982421875" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="1ddcfe55-77ef-4dad-8697-25f159e81c5d" absoluteBounds="5, 1.125, 2, 1.7708968098958331">
+      <DataClassMoniker Name="/one_iGSDataContext/RateDetail" />
+      <nestedChildShapes>
+        <elementListCompartment Id="b8e12cda-e082-40f5-a818-99a2c0428167" absoluteBounds="5.015, 1.585, 1.9700000000000002, 1.2108968098958333" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+  </nestedChildShapes>
+</ordesignerObjectsDiagram>

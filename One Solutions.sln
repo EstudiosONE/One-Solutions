@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "One.Services.Paradise", "On
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "One.Services.Printer", "One.Services.Printer\One.Services.Printer.csproj", "{9494A57E-97D1-40EF-858A-EB22C3977146}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "One.Update.DataBase", "One.Update.DataBase\One.Update.DataBase.csproj", "{0F8B054D-88C4-4D6A-B042-9424DCDF0FEA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{9494A57E-97D1-40EF-858A-EB22C3977146}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9494A57E-97D1-40EF-858A-EB22C3977146}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9494A57E-97D1-40EF-858A-EB22C3977146}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0F8B054D-88C4-4D6A-B042-9424DCDF0FEA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0F8B054D-88C4-4D6A-B042-9424DCDF0FEA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0F8B054D-88C4-4D6A-B042-9424DCDF0FEA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0F8B054D-88C4-4D6A-B042-9424DCDF0FEA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -22,7 +22,7 @@ namespace One.Services.Paradise
 	using System;
 	
 	
-	[global::System.Data.Linq.Mapping.DatabaseAttribute(Name="DataSource")]
+	[global::System.Data.Linq.Mapping.DatabaseAttribute(Name="Paradise")]
 	public partial class dbDataContext : System.Data.Linq.DataContext
 	{
 		
@@ -111,10 +111,13 @@ namespace One.Services.Paradise
     partial void InsertHABITACION(HABITACION instance);
     partial void UpdateHABITACION(HABITACION instance);
     partial void DeleteHABITACION(HABITACION instance);
+    partial void InsertALMANA(ALMANA instance);
+    partial void UpdateALMANA(ALMANA instance);
+    partial void DeleteALMANA(ALMANA instance);
     #endregion
 		
 		public dbDataContext() : 
-				base(global::One.Services.Paradise.Properties.Settings.Default.DataSourceConnectionString, mappingSource)
+				base(global::One.Services.Paradise.Properties.Settings.Default.ParadiseConnectionString, mappingSource)
 		{
 			OnCreated();
 		}
@@ -356,6 +359,14 @@ namespace One.Services.Paradise
 			get
 			{
 				return this.GetTable<HABITACION>();
+			}
+		}
+		
+		public System.Data.Linq.Table<ALMANA> ALMANA
+		{
+			get
+			{
+				return this.GetTable<ALMANA>();
 			}
 		}
 	}
@@ -16433,6 +16444,164 @@ namespace One.Services.Paradise
 					this._HabOcupada = value;
 					this.SendPropertyChanged("HabOcupada");
 					this.OnHabOcupadaChanged();
+				}
+			}
+		}
+		
+		public event PropertyChangingEventHandler PropertyChanging;
+		
+		public event PropertyChangedEventHandler PropertyChanged;
+		
+		protected virtual void SendPropertyChanging()
+		{
+			if ((this.PropertyChanging != null))
+			{
+				this.PropertyChanging(this, emptyChangingEventArgs);
+			}
+		}
+		
+		protected virtual void SendPropertyChanged(String propertyName)
+		{
+			if ((this.PropertyChanged != null))
+			{
+				this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+			}
+		}
+	}
+	
+	[global::System.Data.Linq.Mapping.TableAttribute(Name="dbo.ALMANA")]
+	public partial class ALMANA : INotifyPropertyChanging, INotifyPropertyChanged
+	{
+		
+		private static PropertyChangingEventArgs emptyChangingEventArgs = new PropertyChangingEventArgs(String.Empty);
+		
+		private short _HabNum;
+		
+		private System.DateTime _AlmFec;
+		
+		private System.Nullable<System.DateTime> _AlmHasta;
+		
+		private System.Nullable<char> _AlmEst;
+		
+		private System.Nullable<int> _AlmReserva;
+		
+    #region Definiciones de métodos de extensibilidad
+    partial void OnLoaded();
+    partial void OnValidate(System.Data.Linq.ChangeAction action);
+    partial void OnCreated();
+    partial void OnHabNumChanging(short value);
+    partial void OnHabNumChanged();
+    partial void OnAlmFecChanging(System.DateTime value);
+    partial void OnAlmFecChanged();
+    partial void OnAlmHastaChanging(System.Nullable<System.DateTime> value);
+    partial void OnAlmHastaChanged();
+    partial void OnAlmEstChanging(System.Nullable<char> value);
+    partial void OnAlmEstChanged();
+    partial void OnAlmReservaChanging(System.Nullable<int> value);
+    partial void OnAlmReservaChanged();
+    #endregion
+		
+		public ALMANA()
+		{
+			OnCreated();
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_HabNum", DbType="SmallInt NOT NULL", IsPrimaryKey=true)]
+		public short HabNum
+		{
+			get
+			{
+				return this._HabNum;
+			}
+			set
+			{
+				if ((this._HabNum != value))
+				{
+					this.OnHabNumChanging(value);
+					this.SendPropertyChanging();
+					this._HabNum = value;
+					this.SendPropertyChanged("HabNum");
+					this.OnHabNumChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AlmFec", DbType="DateTime NOT NULL", IsPrimaryKey=true)]
+		public System.DateTime AlmFec
+		{
+			get
+			{
+				return this._AlmFec;
+			}
+			set
+			{
+				if ((this._AlmFec != value))
+				{
+					this.OnAlmFecChanging(value);
+					this.SendPropertyChanging();
+					this._AlmFec = value;
+					this.SendPropertyChanged("AlmFec");
+					this.OnAlmFecChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AlmHasta", DbType="DateTime")]
+		public System.Nullable<System.DateTime> AlmHasta
+		{
+			get
+			{
+				return this._AlmHasta;
+			}
+			set
+			{
+				if ((this._AlmHasta != value))
+				{
+					this.OnAlmHastaChanging(value);
+					this.SendPropertyChanging();
+					this._AlmHasta = value;
+					this.SendPropertyChanged("AlmHasta");
+					this.OnAlmHastaChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AlmEst", DbType="Char(1)")]
+		public System.Nullable<char> AlmEst
+		{
+			get
+			{
+				return this._AlmEst;
+			}
+			set
+			{
+				if ((this._AlmEst != value))
+				{
+					this.OnAlmEstChanging(value);
+					this.SendPropertyChanging();
+					this._AlmEst = value;
+					this.SendPropertyChanged("AlmEst");
+					this.OnAlmEstChanged();
+				}
+			}
+		}
+		
+		[global::System.Data.Linq.Mapping.ColumnAttribute(Storage="_AlmReserva", DbType="Int")]
+		public System.Nullable<int> AlmReserva
+		{
+			get
+			{
+				return this._AlmReserva;
+			}
+			set
+			{
+				if ((this._AlmReserva != value))
+				{
+					this.OnAlmReservaChanging(value);
+					this.SendPropertyChanging();
+					this._AlmReserva = value;
+					this.SendPropertyChanged("AlmReserva");
+					this.OnAlmReservaChanged();
 				}
 			}
 		}

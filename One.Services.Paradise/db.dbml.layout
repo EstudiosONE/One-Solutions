@@ -164,5 +164,11 @@
         <elementListCompartment Id="cc5bceb5-582d-4f20-a0ae-b1ade895c229" absoluteBounds="21.765, 11.21, 1.9700000000000002, 5.826131184895833" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
       </nestedChildShapes>
     </classShape>
+    <classShape Id="2fc6c0e0-55c2-424e-a509-4b4df06377a3" absoluteBounds="21.75, 18.75, 2, 1.7708968098958309">
+      <DataClassMoniker Name="/dbDataContext/ALMANA" />
+      <nestedChildShapes>
+        <elementListCompartment Id="5f236ca0-b3dc-41f0-a125-49e23e0aaee8" absoluteBounds="21.765, 19.21, 1.9700000000000002, 1.2108968098958333" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
   </nestedChildShapes>
 </ordesignerObjectsDiagram>
