@@ -1,9 +1,9 @@
 <template lang="pug">
   #App.o-app
     #Base.o-base
+      router-view.o-navigator
       one-header.o-header
       one-menu.o-menu
-      router-view.o-navigator
       one-footer.o-footer
     #PopUp
 </template>

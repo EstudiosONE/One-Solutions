@@ -1,5 +1,6 @@
 import Vue from 'vue'
 
+import OneIconsMenu from "../../components/icons/menu.vue"
 import OneIconsMenuVertical from "../../components/icons/menu-vertical.vue"
 import OneIconsHome from "../../components/icons/home.vue"
 import OneIconsHotel from "../../components/icons/hotel.vue"
@@ -11,8 +12,12 @@ import OneIconsCircleUserFamale from "../../components/icons/circle-user-famale.
 // Errors
 import OneIconsError404 from "../../components/icons/error/404.vue"
 
+// Corp
+import OneIconsCorpIGS from "../../components/icons/corp/iGS.vue"
+
 function init() {
   // UI Base
+  Vue.component('one-icons-menu', OneIconsMenu)
   Vue.component('one-icons-menu-vertical', OneIconsMenuVertical)
   Vue.component('one-icons-circle-user-male', OneIconsCircleUserMale)
   Vue.component('one-icons-circle-user-famale', OneIconsCircleUserFamale)
@@ -25,6 +30,9 @@ function init() {
 
   // Errores
   Vue.component('one-icons-error-404', OneIconsError404)
+
+  //Corp
+  Vue.component('one-icons-corp-igs', OneIconsCorpIGS)
 }
 
 export default init

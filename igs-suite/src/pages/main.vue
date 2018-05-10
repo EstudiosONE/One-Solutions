@@ -40,11 +40,11 @@ export default {
 }
 #main {
     display: grid;
-    grid-template-columns: 5vw auto 1fr;
-    grid-template-rows: 1fr 0.25fr;
+    grid-template-columns: 60px auto 1fr;
+    grid-template-rows: 72px 1fr 0.25fr;
 }
 #hello {
-    grid-area: 1 / 2 / span 1 / span 1;
+    grid-area: 2 / 2 / span 1 / span 1;
     #container {
         margin: 2vw 0 0;
         width: 80vw;

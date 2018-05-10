@@ -9,11 +9,6 @@ namespace One.WebServices.iGS.Controllers
     [Route("api/[controller]")]
     public class AuthController : Controller
     {
-        [HttpPost]
-        public void Login([FromBody] )
-        {
-
-        }
         // GET api/values
         [HttpGet]
         public IEnumerable<string> Get()
