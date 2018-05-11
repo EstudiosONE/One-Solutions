@@ -23,6 +23,7 @@ export default {}
         height: 48px;
         width: 72px;
         margin: 12px 0;
+				position: relative;
         .icon {
             fill: $clr-grey-600;
             width: 24px;

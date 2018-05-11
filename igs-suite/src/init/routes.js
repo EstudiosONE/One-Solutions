@@ -8,6 +8,7 @@ const routes = [
 
     // Hotel
     { path: '/hotel', component : OnePageHotel },
+    { path: '/hotel/reservation/:id/view', component : OnePageHotel },
 
   // Errors
   { path: '*', component: OnePageError404}
