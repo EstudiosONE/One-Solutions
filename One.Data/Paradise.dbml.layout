@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ordesignerObjectsDiagram dslVersion="1.0.0.0" absoluteBounds="0, 0, 11, 21" name="Paradise">
+  <DataContextMoniker Name="/ParadiseDataContext" />
+  <nestedChildShapes>
+    <classShape Id="fb7434cf-2e85-4005-96e0-abab94ddfd85" absoluteBounds="0.75, 0.75, 2, 20.039532877604167">
+      <DataClassMoniker Name="/ParadiseDataContext/FACTURA" />
+      <nestedChildShapes>
+        <elementListCompartment Id="e7ab5c6e-ddbd-4783-b83f-7ce7bf678399" absoluteBounds="0.765, 1.21, 1.9700000000000002, 19.479532877604164" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="e2bfe5e3-da0c-4f95-b661-c1e764792692" absoluteBounds="3.75, 0.75, 2, 5.6169254557291657">
+      <DataClassMoniker Name="/ParadiseDataContext/FACTURA1" />
+      <nestedChildShapes>
+        <elementListCompartment Id="7006f9a8-7a68-45e9-82b8-d6093599d0a1" absoluteBounds="3.765, 1.21, 1.9700000000000002, 5.0569254557291661" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+    <classShape Id="9e81aa8e-291a-4195-84f2-fcb24b2726ee" absoluteBounds="6.75, 0.75, 2, 2.1554996744791666">
+      <DataClassMoniker Name="/ParadiseDataContext/FACTURALINIMPUESTO" />
+      <nestedChildShapes>
+        <elementListCompartment Id="7f3dac5a-2664-49e4-a37b-9f9c928b9f51" absoluteBounds="6.765, 1.21, 1.9700000000000002, 1.5954996744791665" name="DataPropertiesCompartment" titleTextColor="Black" itemTextColor="Black" />
+      </nestedChildShapes>
+    </classShape>
+  </nestedChildShapes>
+</ordesignerObjectsDiagram>
