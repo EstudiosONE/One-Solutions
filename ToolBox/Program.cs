@@ -10,25 +10,43 @@ namespace ToolBox
     class Program
     {
         // Declaración de variables
-        static DateTime ReportDateFrom = new DateTime(2018, 04, 01);
-        static DateTime ReportDateTo = new DateTime(2018, 04, 30);
-
+        static DateTime ReportDateFrom = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1).AddMonths(-1);
+        static DateTime ReportDateTo = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1).AddDays(-1);
+        static string BasePath = @"T:\Datos\Administracion\Reportes Automatizados" + $"Reporte RIMISOL S.A. {ReportDateFrom.ToString("dd-MM-yy")} - {ReportDateTo.ToString("dd-MM-yy")}.xlsx";
         static void Main(string[] args)
         {
+            //if (args.Count() > 1)
+            //{
+            //    if(args[0] == "-A")
+            //    {
+            //        System.IO.File.AppendAllLines("log.txt", new string[] { $"{DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss")} - Reporte generado de forma automática" });
+            //        // Generacion de los reportes
+            //        IsAutomatized = true;
+            //        var Facturas = GetFacturas();
+            //        GenerateXLS(Facturas);
+            //    }
+            //}
+            //else
+            //{
+            //    System.IO.File.AppendAllLines("log.txt", new string[] { $"{DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss")} - Reporte generado de forma manual" });
 
-            // Solicitud de datos para el reporte
-            Console.WriteLine("Reporte de facturación");
-            Console.WriteLine("");
-            Console.Write($"Fecha inicial ({ReportDateFrom.ToShortDateString()}): ");
-            var ReportDateFrom_T = Console.ReadLine();
-            if (ReportDateFrom_T != "") ReportDateFrom = DateTime.Parse(ReportDateFrom_T);
-            Console.Write($"Fecha final ({ReportDateTo.ToShortDateString()}): ");
-            var ReportDateTo_T = Console.ReadLine();
-            if (ReportDateTo_T != "") ReportDateTo = DateTime.Parse(ReportDateTo_T);
+            //    // Solicitud de datos para el reporte
+            //    Console.WriteLine("Reporte de facturación");
+            //    Console.WriteLine("");
+            //    Console.Write($"Fecha inicial ({ReportDateFrom.ToShortDateString()}): ");
+            //    var ReportDateFrom_T = Console.ReadLine();
+            //    if (ReportDateFrom_T != "") ReportDateFrom = DateTime.Parse(ReportDateFrom_T);
+            //    Console.Write($"Fecha final ({ReportDateTo.ToShortDateString()}): ");
+            //    var ReportDateTo_T = Console.ReadLine();
+            //    if (ReportDateTo_T != "") ReportDateTo = DateTime.Parse(ReportDateTo_T);
 
-            // Generacion de los reportes
-            GenerateXLS(ReportDateFrom, ReportDateTo);
-            Console.ReadLine();
+                // Generacion de los reportes
+
+                var Facturas = GetFacturas();
+                GenerateXLS(Facturas);
+            //}
+
+            //GenerateXLS(ReportDateFrom, ReportDateTo);
         }
         static void GenerateXLS(DateTime ReportDateFrom, DateTime ReportDateTo)
         {
@@ -155,7 +173,18 @@ namespace ToolBox
             // Obtención de datos de reserva
             List<One.Data.FACTURA> Facturas;
             One.Data.ParadiseDataContext db = new One.Data.ParadiseDataContext();
-            Facturas = (from x in db.FACTURA where x.FacFec >= ReportDateFrom & x.FacFec <= ReportDateTo & x.FacCFENumero != 0 & x.FacMoneda == MonId orderby x.FacId select x).ToList();
+            _GetFacturas:
+            try
+            {
+                Facturas = (from x in db.FACTURA where x.FacFec >= ReportDateFrom & x.FacFec <= ReportDateTo & x.FacCFENumero != 0 & x.FacMoneda == MonId orderby x.FacId select x).ToList();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                Console.WriteLine("Iniciando en DB local...");
+                db = new One.Data.ParadiseDataContext("Data Source=localhost;Initial Catalog=Paradise;Integrated Security=True");
+                goto _GetFacturas;
+            }
 
             int lin = 6;
             int sign = 1;
@@ -811,6 +840,96 @@ namespace ToolBox
 
 
         }
+
+        static List<Factura> GetFacturas()
+        {
+            List<Factura> Facturas = new List<Factura>();
+            List<One.Data.FACTURA> FacturasDB = new List<One.Data.FACTURA>();
+
+            One.Data.ParadiseDataContext db = new One.Data.ParadiseDataContext();
+
+            _GetFacturas:
+
+            try
+            {
+                FacturasDB = (from x in db.FACTURA where x.FacFec >= ReportDateFrom & x.FacFec <= ReportDateTo & x.FacCFENumero != 0 orderby x.FacId select x).ToList();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                Console.WriteLine("Iniciando en DB local...");
+                db = new One.Data.ParadiseDataContext("Data Source=localhost;Initial Catalog=Paradise;Integrated Security=True");
+                goto _GetFacturas;
+            }
+
+            int FacturaI = 0;
+
+            foreach (var FacturaDB in FacturasDB)
+            {
+                Console.WriteLine($"Factura Id {FacturaDB.FacId} [{FacturaI + 1} / {FacturasDB.Count + 1}]");
+
+                Factura Factura = new Factura
+                {
+                    Fecha = FacturaDB.FacFec.Value,
+                    TipoCFE = FacturaDB.FacCFETipo.Value,
+                    Serie = FacturaDB.FacCFESerie.TrimEnd(' '),
+                    Numero = FacturaDB.FacCFENumero.Value,
+                    Moneda = Convert.ToInt32(FacturaDB.FacMoneda),
+                    PuntoDeVenta = FacturaDB.FacSucId,
+                    Nombre = FacturaDB.FacPaxNom.TrimEnd(' '),
+                    RUT = FacturaDB.FacPaxRuc.Value == 0 ? "" : FacturaDB.FacPaxRuc.Value.ToString(),
+                    Detalles = new List<Factura.Detalle>()
+                };
+
+
+                decimal sign =
+                    Factura.TipoCFE == 101 ? 1 :
+                    Factura.TipoCFE == 102 ? -1 :
+                    Factura.TipoCFE == 103 ? 1 :
+                    Factura.TipoCFE == 111 ? 1 :
+                    Factura.TipoCFE == 112 ? -1 :
+                    Factura.TipoCFE == 113 ? 1 : 1;
+
+                var FacturaDBDetalles = (from x in db.FACTURA1 where x.FacId == FacturaDB.FacId select x).ToList();
+
+                foreach (var FacturaDBDetalle in FacturaDBDetalles)
+                {
+                    var Detalle = (from x in Factura.Detalles where x.PuntoDeVenta == FacturaDBDetalle.FacPtoV select x).FirstOrDefault();
+                    if (Detalle == default(Factura.Detalle))
+                    {
+                        Detalle = new Factura.Detalle
+                        {
+                            PuntoDeVenta = FacturaDBDetalle.FacPtoV
+                        };
+                        Factura.Detalles.Add(Detalle);
+                    }
+
+                    One.Data.FACTURALINIMPUESTO DetalleImp;
+
+                    DetalleImp = (from x in db.FACTURALINIMPUESTO where x.FacId == FacturaDB.FacId & x.FacLin == FacturaDBDetalle.FacLin select x).FirstOrDefault();
+                    if (DetalleImp == default(One.Data.FACTURALINIMPUESTO) || DetalleImp.FacLinImpuestoIvaTip == 3)
+                    {
+                        Detalle.NoGravado = Detalle.NoGravado + (FacturaDBDetalle.FacTotLin.Value * sign);
+                    }
+                    else if (DetalleImp.FacLinImpuestoIvaTip == 1)
+                    {
+                        Detalle.SubMin = Detalle.SubMin + (DetalleImp.FacLinImporteImpuestoNeto.Value * sign);
+                        Detalle.Min = Detalle.Min + (DetalleImp.FacLinImporteImpuestoIva.Value * sign);
+                    }
+                    else if (DetalleImp.FacLinImpuestoIvaTip == 2)
+                    {
+                        Detalle.SubBas = Detalle.SubBas + (DetalleImp.FacLinImporteImpuestoNeto.Value * sign);
+                        Detalle.Bas = Detalle.Bas + (DetalleImp.FacLinImporteImpuestoIva.Value * sign);
+                    }
+                }
+
+                Facturas.Add(Factura);
+
+                FacturaI++;
+            }
+
+            return Facturas;
+        }
         static void GenerateXLS(List<Factura> Facturas)
         {
             // Generación del Libro
@@ -1039,19 +1158,247 @@ namespace ToolBox
 
 
                 }
+                decimal
+                    T_NoGravado = 0,
+                    T_SubMin = 0,
+                    T_SubBas = 0,
+                    T_Min = 0,
+                    T_Bas = 0,
+                    T_Imp = 0,
+                    T_Total = 0;
 
-                worksheet.Range[lin, 61].Number = Convert.ToDouble(from x in Factura.Detalles group x by x.NoGravado into y select new { z = y.Sum(x => x.NoGravado) });
-                worksheet.Range[lin, 62].Number = Convert.ToDouble(from x in Factura.Detalles group x by x.NoGravado into y select new { z = y.Sum(x => x.SubMin) });
-                worksheet.Range[lin, 63].Number = Convert.ToDouble(from x in Factura.Detalles group x by x.NoGravado into y select new { z = y.Sum(x => x.SubBas) });
-                worksheet.Range[lin, 64].Number = Convert.ToDouble(from x in Factura.Detalles group x by x.NoGravado into y select new { z = y.Sum(x => x.Min) });
-                worksheet.Range[lin, 65].Number = Convert.ToDouble(from x in Factura.Detalles group x by x.NoGravado into y select new { z = y.Sum(x => x.Bas) });
-                worksheet.Range[lin, 66].Number = Convert.ToDouble(0);
-                worksheet.Range[lin, 67].Number = Convert.ToDouble(from x in Factura.Detalles group x by x.NoGravado into y select new { z = y.Sum(x => x.Total) });
+                foreach (var Detalle in Factura.Detalles)
+                {
+                    T_NoGravado = T_NoGravado + Detalle.NoGravado;
+                    T_SubMin = T_SubMin + Detalle.SubMin;
+                    T_SubBas = T_SubBas + Detalle.SubBas;
+                    T_Min = T_Min + Detalle.Min;
+                    T_Bas = T_Bas + Detalle.Bas;
+                }
+
+                T_Imp = T_Min + T_Bas;
+                T_Total = T_NoGravado + T_SubMin + T_SubBas + T_Imp;
+
+                worksheet.Range[lin, 61].Number = Convert.ToDouble(T_NoGravado);
+                worksheet.Range[lin, 62].Number = Convert.ToDouble(T_SubMin);
+                worksheet.Range[lin, 63].Number = Convert.ToDouble(T_SubBas);
+                worksheet.Range[lin, 64].Number = Convert.ToDouble(T_Min);
+                worksheet.Range[lin, 65].Number = Convert.ToDouble(T_Bas);
+                worksheet.Range[lin, 66].Number = Convert.ToDouble(T_Imp);
+                worksheet.Range[lin, 67].Number = Convert.ToDouble(T_Total);
+
+                worksheet.Range[lin, 13, lin, 67].NumberFormat = "0.00";
 
                 lin++;
                 if (Factura.Moneda == 1) UYULine = lin;
                 else USDLine = lin;
             }
+
+            // Generar Totales
+            foreach (var worksheet in workbook.Worksheets.ToList())
+            {
+                var lin = workbook.Worksheets.ToList().IndexOf(worksheet) == 0 ? UYULine : USDLine;
+
+                worksheet.Range[lin + 1, 11].Text = "TOTALES";
+                worksheet.Range[lin + 1, 11, lin + 2, 12].Merge();
+
+                worksheet.Range[lin + 1, 13].Text = "Hospedaje:";
+                worksheet.Range[lin + 1, 13, lin + 1, 18].Merge();
+                worksheet.Range[lin + 2, 13].Text = "No gravado:";
+                worksheet.Range[lin + 2, 14].Text = "Sub. IVA Mínimo:";
+                worksheet.Range[lin + 2, 15].Text = "Sub. IVA Básico:";
+                worksheet.Range[lin + 2, 16].Text = "IVA Mínimo:";
+                worksheet.Range[lin + 2, 17].Text = "IVA Básico:";
+                worksheet.Range[lin + 2, 18].Text = "Total:";
+
+                worksheet.Range[lin + 1, 19].Text = "Restaurante:";
+                worksheet.Range[lin + 1, 19, lin + 1, 24].Merge();
+                worksheet.Range[lin + 2, 19].Text = "No gravado:";
+                worksheet.Range[lin + 2, 20].Text = "Sub. IVA Mínimo:";
+                worksheet.Range[lin + 2, 21].Text = "Sub. IVA Básico:";
+                worksheet.Range[lin + 2, 22].Text = "IVA Mínimo:";
+                worksheet.Range[lin + 2, 23].Text = "IVA Básico:";
+                worksheet.Range[lin + 2, 24].Text = "Total:";
+
+                worksheet.Range[lin + 1, 25].Text = "Minimercado:";
+                worksheet.Range[lin + 1, 25, lin + 1, 30].Merge();
+                worksheet.Range[lin + 2, 25].Text = "No gravado:";
+                worksheet.Range[lin + 2, 26].Text = "Sub. IVA Mínimo:";
+                worksheet.Range[lin + 2, 27].Text = "Sub. IVA Básico:";
+                worksheet.Range[lin + 2, 28].Text = "IVA Mínimo:";
+                worksheet.Range[lin + 2, 29].Text = "IVA Básico:";
+                worksheet.Range[lin + 2, 30].Text = "Total:";
+
+                worksheet.Range[lin + 1, 31].Text = "Barra:";
+                worksheet.Range[lin + 1, 31, lin + 1, 36].Merge();
+                worksheet.Range[lin + 2, 31].Text = "No gravado:";
+                worksheet.Range[lin + 2, 32].Text = "Sub. IVA Mínimo:";
+                worksheet.Range[lin + 2, 33].Text = "Sub. IVA Básico:";
+                worksheet.Range[lin + 2, 34].Text = "IVA Mínimo:";
+                worksheet.Range[lin + 2, 35].Text = "IVA Básico:";
+                worksheet.Range[lin + 2, 36].Text = "Total:";
+
+                worksheet.Range[lin + 1, 37].Text = "Lavadero:";
+                worksheet.Range[lin + 1, 37, lin + 1, 42].Merge();
+                worksheet.Range[lin + 2, 37].Text = "No gravado:";
+                worksheet.Range[lin + 2, 38].Text = "Sub. IVA Mínimo:";
+                worksheet.Range[lin + 2, 39].Text = "Sub. IVA Básico:";
+                worksheet.Range[lin + 2, 40].Text = "IVA Mínimo:";
+                worksheet.Range[lin + 2, 41].Text = "IVA Básico:";
+                worksheet.Range[lin + 2, 42].Text = "Total:";
+
+                worksheet.Range[lin + 1, 43].Text = "Telefono:";
+                worksheet.Range[lin + 1, 43, lin + 1, 48].Merge();
+                worksheet.Range[lin + 2, 43].Text = "No gravado:";
+                worksheet.Range[lin + 2, 44].Text = "Sub. IVA Mínimo:";
+                worksheet.Range[lin + 2, 45].Text = "Sub. IVA Básico:";
+                worksheet.Range[lin + 2, 46].Text = "IVA Mínimo:";
+                worksheet.Range[lin + 2, 47].Text = "IVA Básico:";
+                worksheet.Range[lin + 2, 48].Text = "Total:";
+
+                worksheet.Range[lin + 1, 49].Text = "Varios:";
+                worksheet.Range[lin + 1, 49, lin + 1, 54].Merge();
+                worksheet.Range[lin + 2, 49].Text = "No gravado:";
+                worksheet.Range[lin + 2, 50].Text = "Sub. IVA Mínimo:";
+                worksheet.Range[lin + 2, 51].Text = "Sub. IVA Básico:";
+                worksheet.Range[lin + 2, 52].Text = "IVA Mínimo:";
+                worksheet.Range[lin + 2, 53].Text = "IVA Básico:";
+                worksheet.Range[lin + 2, 54].Text = "Total:";
+
+                worksheet.Range[lin + 1, 55].Text = "Eventos:";
+                worksheet.Range[lin + 1, 55, lin + 1, 60].Merge();
+                worksheet.Range[lin + 2, 55].Text = "No gravado:";
+                worksheet.Range[lin + 2, 56].Text = "Sub. IVA Mínimo:";
+                worksheet.Range[lin + 2, 57].Text = "Sub. IVA Básico:";
+                worksheet.Range[lin + 2, 58].Text = "IVA Mínimo:";
+                worksheet.Range[lin + 2, 59].Text = "IVA Básico:";
+                worksheet.Range[lin + 2, 60].Text = "Total:";
+
+                worksheet.Range[lin + 1, 61].Text = "Totales:";
+                worksheet.Range[lin + 1, 61, lin + 1, 67].Merge();
+                worksheet.Range[lin + 2, 61].Text = "No gravado:";
+                worksheet.Range[lin + 2, 62].Text = "Sub. IVA Mínimo:";
+                worksheet.Range[lin + 2, 63].Text = "Sub. IVA Básico:";
+                worksheet.Range[lin + 2, 64].Text = "IVA Mínimo:";
+                worksheet.Range[lin + 2, 65].Text = "IVA Básico:";
+                worksheet.Range[lin + 2, 66].Text = "Impuestos:";
+                worksheet.Range[lin + 2, 67].Text = "Total:";
+
+
+                worksheet.Range[lin + 3, 13].Formula = $"=SUM(M6:M{lin - 1})";
+                worksheet.Range[lin + 3, 14].Formula = $"=SUM(N6:N{lin - 1})";
+                worksheet.Range[lin + 3, 15].Formula = $"=SUM(O6:O{lin - 1})";
+                worksheet.Range[lin + 3, 16].Formula = $"=SUM(P6:P{lin - 1})";
+                worksheet.Range[lin + 3, 17].Formula = $"=SUM(Q6:Q{lin - 1})";
+                worksheet.Range[lin + 3, 18].Formula = $"=SUM(R6:R{lin - 1})";
+                worksheet.Range[lin + 3, 19].Formula = $"=SUM(S6:M{lin - 1})";
+                worksheet.Range[lin + 3, 20].Formula = $"=SUM(T6:S{lin - 1})";
+                worksheet.Range[lin + 3, 21].Formula = $"=SUM(U6:T{lin - 1})";
+                worksheet.Range[lin + 3, 22].Formula = $"=SUM(V6:U{lin - 1})";
+                worksheet.Range[lin + 3, 23].Formula = $"=SUM(W6:V{lin - 1})";
+                worksheet.Range[lin + 3, 24].Formula = $"=SUM(X6:W{lin - 1})";
+                worksheet.Range[lin + 3, 25].Formula = $"=SUM(Y6:X{lin - 1})";
+                worksheet.Range[lin + 3, 26].Formula = $"=SUM(Z6:Y{lin - 1})";
+                worksheet.Range[lin + 3, 27].Formula = $"=SUM(AA6:AA{lin - 1})";
+                worksheet.Range[lin + 3, 28].Formula = $"=SUM(AB6:AB{lin - 1})";
+                worksheet.Range[lin + 3, 29].Formula = $"=SUM(AC6:AC{lin - 1})";
+                worksheet.Range[lin + 3, 30].Formula = $"=SUM(AD6:AD{lin - 1})";
+                worksheet.Range[lin + 3, 31].Formula = $"=SUM(AE6:AE{lin - 1})";
+                worksheet.Range[lin + 3, 32].Formula = $"=SUM(AF6:AF{lin - 1})";
+                worksheet.Range[lin + 3, 33].Formula = $"=SUM(AG6:AG{lin - 1})";
+                worksheet.Range[lin + 3, 34].Formula = $"=SUM(AH6:AH{lin - 1})";
+                worksheet.Range[lin + 3, 35].Formula = $"=SUM(AI6:AI{lin - 1})";
+                worksheet.Range[lin + 3, 36].Formula = $"=SUM(AJ6:AJ{lin - 1})";
+                worksheet.Range[lin + 3, 37].Formula = $"=SUM(AK6:AK{lin - 1})";
+                worksheet.Range[lin + 3, 38].Formula = $"=SUM(AL6:AL{lin - 1})";
+                worksheet.Range[lin + 3, 39].Formula = $"=SUM(AM6:AM{lin - 1})";
+                worksheet.Range[lin + 3, 40].Formula = $"=SUM(AN6:AN{lin - 1})";
+                worksheet.Range[lin + 3, 41].Formula = $"=SUM(AO6:AO{lin - 1})";
+                worksheet.Range[lin + 3, 42].Formula = $"=SUM(AP6:AP{lin - 1})";
+                worksheet.Range[lin + 3, 43].Formula = $"=SUM(AQ6:AQ{lin - 1})";
+                worksheet.Range[lin + 3, 44].Formula = $"=SUM(AR6:AR{lin - 1})";
+                worksheet.Range[lin + 3, 45].Formula = $"=SUM(AS6:AS{lin - 1})";
+                worksheet.Range[lin + 3, 46].Formula = $"=SUM(AT6:AT{lin - 1})";
+                worksheet.Range[lin + 3, 47].Formula = $"=SUM(AU6:AU{lin - 1})";
+                worksheet.Range[lin + 3, 48].Formula = $"=SUM(AV6:AV{lin - 1})";
+                worksheet.Range[lin + 3, 49].Formula = $"=SUM(AW6:AW{lin - 1})";
+                worksheet.Range[lin + 3, 50].Formula = $"=SUM(AX6:AX{lin - 1})";
+                worksheet.Range[lin + 3, 51].Formula = $"=SUM(AY6:AY{lin - 1})";
+                worksheet.Range[lin + 3, 52].Formula = $"=SUM(AZ6:AZ{lin - 1})";
+                worksheet.Range[lin + 3, 53].Formula = $"=SUM(BA6:BA{lin - 1})";
+                worksheet.Range[lin + 3, 54].Formula = $"=SUM(BB6:BB{lin - 1})";
+                worksheet.Range[lin + 3, 55].Formula = $"=SUM(BC6:BC{lin - 1})";
+                worksheet.Range[lin + 3, 56].Formula = $"=SUM(BD6:BD{lin - 1})";
+                worksheet.Range[lin + 3, 57].Formula = $"=SUM(BE6:BE{lin - 1})";
+                worksheet.Range[lin + 3, 58].Formula = $"=SUM(BF6:BF{lin - 1})";
+                worksheet.Range[lin + 3, 59].Formula = $"=SUM(BG6:BG{lin - 1})";
+                worksheet.Range[lin + 3, 60].Formula = $"=SUM(BH6:BH{lin - 1})";
+                worksheet.Range[lin + 3, 61].Formula = $"=SUM(BI6:BI{lin - 1})";
+                worksheet.Range[lin + 3, 62].Formula = $"=SUM(BJ6:BJ{lin - 1})";
+                worksheet.Range[lin + 3, 63].Formula = $"=SUM(BK6:BK{lin - 1})";
+                worksheet.Range[lin + 3, 64].Formula = $"=SUM(BL6:BL{lin - 1})";
+                worksheet.Range[lin + 3, 65].Formula = $"=SUM(BM6:BM{lin - 1})";
+                worksheet.Range[lin + 3, 66].Formula = $"=SUM(BN6:BN{lin - 1})";
+                worksheet.Range[lin + 3, 67].Formula = $"=SUM(BO6:BO{lin - 1})";
+
+                worksheet.Range[lin + 3, 13].NumberFormat = "0.00";
+                worksheet.Range[lin + 3, 14].NumberFormat = "0.00";
+                worksheet.Range[lin + 3, 15].NumberFormat = "0.00";
+                worksheet.Range[lin + 3, 16].NumberFormat = "0.00";
+                worksheet.Range[lin + 3, 17].NumberFormat = "0.00";
+                worksheet.Range[lin + 3, 18].NumberFormat = "0.00";
+                worksheet.Range[lin + 3, 19].NumberFormat = "0.00";
+                worksheet.Range[lin + 3, 20].NumberFormat = "0.00";
+                worksheet.Range[lin + 3, 21].NumberFormat = "0.00";
+                worksheet.Range[lin + 3, 22].NumberFormat = "0.00";
+                worksheet.Range[lin + 3, 23].NumberFormat = "0.00";
+                worksheet.Range[lin + 3, 24].NumberFormat = "0.00";
+                worksheet.Range[lin + 3, 25].NumberFormat = "0.00";
+                worksheet.Range[lin + 3, 26].NumberFormat = "0.00";
+                worksheet.Range[lin + 3, 27].NumberFormat = "0.00";
+                worksheet.Range[lin + 3, 28].NumberFormat = "0.00";
+                worksheet.Range[lin + 3, 29].NumberFormat = "0.00";
+                worksheet.Range[lin + 3, 30].NumberFormat = "0.00";
+                worksheet.Range[lin + 3, 31].NumberFormat = "0.00";
+                worksheet.Range[lin + 3, 32].NumberFormat = "0.00";
+                worksheet.Range[lin + 3, 33].NumberFormat = "0.00";
+                worksheet.Range[lin + 3, 34].NumberFormat = "0.00";
+                worksheet.Range[lin + 3, 35].NumberFormat = "0.00";
+                worksheet.Range[lin + 3, 36].NumberFormat = "0.00";
+                worksheet.Range[lin + 3, 37].NumberFormat = "0.00";
+                worksheet.Range[lin + 3, 38].NumberFormat = "0.00";
+                worksheet.Range[lin + 3, 39].NumberFormat = "0.00";
+                worksheet.Range[lin + 3, 40].NumberFormat = "0.00";
+                worksheet.Range[lin + 3, 41].NumberFormat = "0.00";
+                worksheet.Range[lin + 3, 42].NumberFormat = "0.00";
+                worksheet.Range[lin + 3, 43].NumberFormat = "0.00";
+                worksheet.Range[lin + 3, 44].NumberFormat = "0.00";
+                worksheet.Range[lin + 3, 45].NumberFormat = "0.00";
+                worksheet.Range[lin + 3, 46].NumberFormat = "0.00";
+                worksheet.Range[lin + 3, 47].NumberFormat = "0.00";
+                worksheet.Range[lin + 3, 48].NumberFormat = "0.00";
+                worksheet.Range[lin + 3, 49].NumberFormat = "0.00";
+                worksheet.Range[lin + 3, 50].NumberFormat = "0.00";
+                worksheet.Range[lin + 3, 51].NumberFormat = "0.00";
+                worksheet.Range[lin + 3, 52].NumberFormat = "0.00";
+                worksheet.Range[lin + 3, 53].NumberFormat = "0.00";
+                worksheet.Range[lin + 3, 54].NumberFormat = "0.00";
+                worksheet.Range[lin + 3, 55].NumberFormat = "0.00";
+                worksheet.Range[lin + 3, 56].NumberFormat = "0.00";
+                worksheet.Range[lin + 3, 57].NumberFormat = "0.00";
+                worksheet.Range[lin + 3, 58].NumberFormat = "0.00";
+                worksheet.Range[lin + 3, 59].NumberFormat = "0.00";
+                worksheet.Range[lin + 3, 60].NumberFormat = "0.00";
+                worksheet.Range[lin + 3, 61].NumberFormat = "0.00";
+                worksheet.Range[lin + 3, 62].NumberFormat = "0.00";
+                worksheet.Range[lin + 3, 63].NumberFormat = "0.00";
+                worksheet.Range[lin + 3, 64].NumberFormat = "0.00";
+                worksheet.Range[lin + 3, 65].NumberFormat = "0.00";
+                worksheet.Range[lin + 3, 66].NumberFormat = "0.00";
+                worksheet.Range[lin + 3, 67].NumberFormat = "0.00";
+            }
+            // Guardar el documento
+            workbook.SaveAs(BasePath);
         }
     }
     public class Factura
