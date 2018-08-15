@@ -12,39 +12,11 @@ namespace ToolBox
         // Declaración de variables
         static DateTime ReportDateFrom = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1).AddMonths(-1);
         static DateTime ReportDateTo = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1).AddDays(-1);
-        static string BasePath = @"T:\Datos\Administracion\Reportes Automatizados" + $"Reporte RIMISOL S.A. {ReportDateFrom.ToString("dd-MM-yy")} - {ReportDateTo.ToString("dd-MM-yy")}.xlsx";
+        static string BasePath = @"T:\Datos\Administracion\Reportes Automatizados\" + $"Reporte RIMISOL S.A. {ReportDateFrom.ToString("dd-MM-yy")} - {ReportDateTo.ToString("dd-MM-yy")}.xlsx";
         static void Main(string[] args)
         {
-            //if (args.Count() > 1)
-            //{
-            //    if(args[0] == "-A")
-            //    {
-            //        System.IO.File.AppendAllLines("log.txt", new string[] { $"{DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss")} - Reporte generado de forma automática" });
-            //        // Generacion de los reportes
-            //        IsAutomatized = true;
-            //        var Facturas = GetFacturas();
-            //        GenerateXLS(Facturas);
-            //    }
-            //}
-            //else
-            //{
-            //    System.IO.File.AppendAllLines("log.txt", new string[] { $"{DateTime.Now.ToString("yyyy-MM-dd hh:mm:ss")} - Reporte generado de forma manual" });
-
-            //    // Solicitud de datos para el reporte
-            //    Console.WriteLine("Reporte de facturación");
-            //    Console.WriteLine("");
-            //    Console.Write($"Fecha inicial ({ReportDateFrom.ToShortDateString()}): ");
-            //    var ReportDateFrom_T = Console.ReadLine();
-            //    if (ReportDateFrom_T != "") ReportDateFrom = DateTime.Parse(ReportDateFrom_T);
-            //    Console.Write($"Fecha final ({ReportDateTo.ToShortDateString()}): ");
-            //    var ReportDateTo_T = Console.ReadLine();
-            //    if (ReportDateTo_T != "") ReportDateTo = DateTime.Parse(ReportDateTo_T);
-
-                // Generacion de los reportes
-
-                var Facturas = GetFacturas();
-                GenerateXLS(Facturas);
-            //}
+            var Facturas = GetFacturas();
+            GenerateXLS(Facturas);
 
             //GenerateXLS(ReportDateFrom, ReportDateTo);
         }
@@ -1291,14 +1263,14 @@ namespace ToolBox
                 worksheet.Range[lin + 3, 16].Formula = $"=SUM(P6:P{lin - 1})";
                 worksheet.Range[lin + 3, 17].Formula = $"=SUM(Q6:Q{lin - 1})";
                 worksheet.Range[lin + 3, 18].Formula = $"=SUM(R6:R{lin - 1})";
-                worksheet.Range[lin + 3, 19].Formula = $"=SUM(S6:M{lin - 1})";
-                worksheet.Range[lin + 3, 20].Formula = $"=SUM(T6:S{lin - 1})";
-                worksheet.Range[lin + 3, 21].Formula = $"=SUM(U6:T{lin - 1})";
-                worksheet.Range[lin + 3, 22].Formula = $"=SUM(V6:U{lin - 1})";
-                worksheet.Range[lin + 3, 23].Formula = $"=SUM(W6:V{lin - 1})";
-                worksheet.Range[lin + 3, 24].Formula = $"=SUM(X6:W{lin - 1})";
-                worksheet.Range[lin + 3, 25].Formula = $"=SUM(Y6:X{lin - 1})";
-                worksheet.Range[lin + 3, 26].Formula = $"=SUM(Z6:Y{lin - 1})";
+                worksheet.Range[lin + 3, 19].Formula = $"=SUM(S6:S{lin - 1})";
+                worksheet.Range[lin + 3, 20].Formula = $"=SUM(T6:T{lin - 1})";
+                worksheet.Range[lin + 3, 21].Formula = $"=SUM(U6:U{lin - 1})";
+                worksheet.Range[lin + 3, 22].Formula = $"=SUM(V6:V{lin - 1})";
+                worksheet.Range[lin + 3, 23].Formula = $"=SUM(W6:W{lin - 1})";
+                worksheet.Range[lin + 3, 24].Formula = $"=SUM(X6:X{lin - 1})";
+                worksheet.Range[lin + 3, 25].Formula = $"=SUM(Y6:Y{lin - 1})";
+                worksheet.Range[lin + 3, 26].Formula = $"=SUM(Z6:Z{lin - 1})";
                 worksheet.Range[lin + 3, 27].Formula = $"=SUM(AA6:AA{lin - 1})";
                 worksheet.Range[lin + 3, 28].Formula = $"=SUM(AB6:AB{lin - 1})";
                 worksheet.Range[lin + 3, 29].Formula = $"=SUM(AC6:AC{lin - 1})";
